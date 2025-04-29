@@ -1,0 +1,396 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ULTRA AGGRESSIVE STYLING TO FORCE BLACK BACKGROUNDS - BUT CAREFULLY EXCLUDING ARROWS */
+.mermaid-diagram .node rect,
+.mermaid-diagram .node circle,
+.mermaid-diagram .node ellipse,
+.mermaid-diagram .node polygon,
+.mermaid-diagram .node path,
+.mermaid-diagram .basic,
+.mermaid-diagram .flowchart-label rect,
+.mermaid-diagram .label-container {
+  fill: #121212 !important;
+  stroke: url(#border-gradient) !important;
+  stroke-width: 3px !important;
+}
+
+/* FIX ARROWS */
+.mermaid-diagram .edgePath .path {
+  fill: none !important;
+  stroke: #6366f1 !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid-diagram .arrowheadPath,
+.mermaid-diagram .marker {
+  fill: #6366f1 !important;
+  stroke: none !important;
+}
+
+.mermaid-diagram text {
+  fill: white !important;
+  color: white !important;
+}
+
+/* Override any inline styles that might be added by mermaid */
+.mermaid-diagram [style*="fill: rgb(255, 255, 255)"],
+.mermaid-diagram [style*="fill:#fff"],
+.mermaid-diagram [style*="fill: #fff"],
+.mermaid-diagram [style*="fill:#ffffff"],
+.mermaid-diagram [style*="fill: #ffffff"],
+.mermaid-diagram [style*="fill: white"],
+.mermaid-diagram [style*="fill:white"],
+.mermaid-diagram [style*="fill: rgb(248, 248, 248)"],
+.mermaid-diagram [style*="fill:#f9f9f9"],
+.mermaid-diagram [style*="fill: #f9f9f9"] {
+  fill: #121212 !important;
+}
+
+/* Ensure all text is white */
+.mermaid-diagram [style*="fill: rgb(0, 0, 0)"],
+.mermaid-diagram [style*="fill:#000"],
+.mermaid-diagram [style*="fill: #000"],
+.mermaid-diagram [style*="fill:#000000"],
+.mermaid-diagram [style*="fill: #000000"],
+.mermaid-diagram [style*="fill: black"],
+.mermaid-diagram [style*="fill:black"] {
+  fill: white !important;
+}
+
+/* EXCEPTION FOR ARROWS */
+.mermaid-diagram .edgePath .path[style*="fill:"],
+.mermaid-diagram .edgePath .path[style*="fill:"] {
+  fill: none !important;
+}
+
+.mermaid-diagram .arrowheadPath[style*="fill:"],
+.mermaid-diagram .marker[style*="fill:"] {
+  fill: #6366f1 !important;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Futuristic theme enhancements */
+.mermaid-diagram svg .node rect,
+.mermaid-diagram svg .node circle,
+.mermaid-diagram svg .node ellipse,
+.mermaid-diagram svg .node polygon,
+.mermaid-diagram svg .node path {
+  filter: drop-shadow(0px 0px 8px rgba(99, 102, 241, 0.6));
+  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+
+.mermaid-diagram svg .node:hover rect,
+.mermaid-diagram svg .node:hover circle,
+.mermaid-diagram svg .node:hover ellipse,
+.mermaid-diagram svg .node:hover polygon,
+.mermaid-diagram svg .node:hover path {
+  filter: drop-shadow(0px 0px 15px rgba(99, 102, 241, 0.9));
+  transform: translateY(-3px) scale(1.02);
+}
+
+.mermaid-diagram svg .edgePath .path {
+  stroke-width: 2px;
+  stroke: #6366f1;
+}
+
+.mermaid-diagram svg .edgePath.hover .path {
+  stroke-width: 3px;
+  stroke: #818cf8;
+}
+
+/* CRITICAL FIX: Ensure text is always WHITE for visibility on dark backgrounds */
+.mermaid-diagram svg .label {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  color: white !important;
+}
+
+.mermaid-diagram svg .label foreignObject {
+  overflow: visible;
+}
+
+.mermaid-diagram svg .node .label foreignObject div {
+  color: white !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Ensure text is always visible with WHITE color */
+.mermaid-diagram text {
+  fill: white !important;
+  font-weight: 600;
+}
+
+/* Add styles for edge labels to ensure they're visible */
+.mermaid-diagram .edgeLabel {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.mermaid-diagram .edgeLabel text {
+  fill: white !important;
+}
+
+/* Add a dark background to text elements for better readability */
+.mermaid-diagram .node text {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 2px;
+  border-radius: 2px;
+}
+
+/* Fix for node backgrounds - make them black */
+.mermaid-diagram svg .node rect,
+.mermaid-diagram svg .node circle,
+.mermaid-diagram svg .node ellipse,
+.mermaid-diagram svg .node polygon {
+  fill: #121212 !important;
+}
+
+/* Make cluster backgrounds dark as well */
+.mermaid-diagram svg .cluster rect {
+  fill: rgba(18, 18, 18, 0.8) !important;
+  rx: 15px !important;
+  ry: 15px !important;
+}
+
+/* Ensure ALL flowchart blocks are black with gradient borders */
+.mermaid-diagram svg .node rect,
+.mermaid-diagram svg .node circle,
+.mermaid-diagram svg .node ellipse,
+.mermaid-diagram svg .node polygon,
+.mermaid-diagram svg .node path,
+.mermaid-diagram svg .basic,
+.mermaid-diagram svg rect:not(.label-container) {
+  fill: #121212 !important;
+  stroke-width: 3px !important;
+}
+
+/* Add a glowing gradient border effect to all nodes */
+.mermaid-diagram svg .node rect,
+.mermaid-diagram svg .node circle,
+.mermaid-diagram svg .node ellipse,
+.mermaid-diagram svg .node polygon,
+.mermaid-diagram svg .basic {
+  stroke: url(#border-gradient) !important;
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6));
+}
+
+/* Enhanced hover effect with brighter gradient border */
+.mermaid-diagram svg .node:hover rect,
+.mermaid-diagram svg .node:hover circle,
+.mermaid-diagram svg .node:hover ellipse,
+.mermaid-diagram svg .node:hover polygon,
+.mermaid-diagram svg .node:hover path {
+  filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.9));
+  stroke-width: 4px !important;
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Ensure all flowchart decision diamonds are black */
+.mermaid-diagram svg .node.flowchart-label polygon,
+.mermaid-diagram svg polygon.label-container {
+  fill: #121212 !important;
+  stroke: url(#border-gradient) !important;
+  stroke-width: 3px !important;
+}
+
+/* Fix for any remaining white backgrounds */
+.mermaid-diagram .node .label-container {
+  fill: #121212 !important;
+}
+
+/* Add a subtle animation to the gradient borders */
+@keyframes gradient-shift {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+}
+
+.mermaid-diagram svg .node rect,
+.mermaid-diagram svg .node circle,
+.mermaid-diagram svg .node ellipse,
+.mermaid-diagram svg .node polygon {
+  stroke-dasharray: 10, 5;
+  animation: gradient-shift 20s linear infinite;
+}
+
+/* Border gradient */
+.border-gradient {
+  position: relative;
+  border-radius: 0.75rem;
+}
+
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  padding: 2px;
+  background: linear-gradient(to right, #4f46e5, #8b5cf6, #ec4899);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Animated blobs */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 15s infinite alternate;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
+}
+
+/* Animated paths */
+@keyframes dash {
+  to {
+    stroke-dashoffset: 100;
+  }
+}
+
+.animated-path {
+  animation: dash 20s linear infinite;
+}
+
+/* Layer animations */
+@keyframes pulse-glow {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+
+.layer-animation {
+  animation: pulse-glow 4s infinite alternate ease-in-out;
+}
+
+.layer-1-bg {
+  fill: rgba(79, 70, 229, 0.1);
+}
+
+.layer-2-bg {
+  fill: rgba(139, 92, 246, 0.1);
+  animation-delay: 1s;
+}
+
+.layer-3-bg {
+  fill: rgba(236, 72, 153, 0.1);
+  animation-delay: 2s;
+}
+
+.layer-4-bg {
+  fill: rgba(6, 182, 212, 0.1);
+  animation-delay: 3s;
+}
