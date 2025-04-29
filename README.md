@@ -14,11 +14,13 @@ Any changes you make to your deployed app will be automatically pushed to this r
 
 Your project is live at:
 
-**[https://vercel.com/0000x582d6976s-projects/v0-mermaid-code-renderer](https://vercel.com/0000x582d6976s-projects/v0-mermaid-code-renderer)**
+**[https://sonya-mermaid.vercel.app/](https://sonya-mermaid.vercel.app/)**
 
 ## Build your app
 
 Continue building your app on:
+
+![Screenshot 2025-04-29 at 04-07-30 Sonya Topluluğu - Mermaid Diagram Renderer](https://github.com/user-attachments/assets/5344d312-b6b8-4f96-90ca-a23dc5325f77)
 
 **[https://v0.dev/chat/projects/UBGmAli4HYz](https://v0.dev/chat/projects/UBGmAli4HYz)**
 
