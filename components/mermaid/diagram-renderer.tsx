@@ -5,6 +5,7 @@ import mermaid from "mermaid"
 import { cn } from "@/lib/utils"
 import { RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { format } from "date-fns"
 
 interface DiagramRendererProps {
   code: string
@@ -14,9 +15,20 @@ interface DiagramRendererProps {
     layer3: { from: string; to: string }
     layer4: { from: string; to: string }
   }
+  projectName: string
+  projectVersion: string
+  projectDetails: string
+  date: Date
 }
 
-export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
+export function DiagramRenderer({
+  code,
+  layerColors,
+  projectName,
+  projectVersion,
+  projectDetails,
+  date,
+}: DiagramRendererProps) {
   const diagramRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -51,6 +63,32 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
     try {
       diagramRef.current.innerHTML = ""
 
+      // Add metadata to the diagram container
+      const metadataDiv = document.createElement("div")
+      metadataDiv.className = "mb-4 p-3 bg-black/30 rounded-lg border border-indigo-500/30"
+      metadataDiv.innerHTML = `
+        <h3 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+          ${projectName}
+        </h3>
+        <div class="flex flex-wrap gap-4 text-sm text-indigo-300 mt-1">
+          <span class="flex items-center">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 mr-2"></span>
+            Version: ${projectVersion}
+          </span>
+          <span class="flex items-center">
+            <span class="w-2 h-2 rounded-full bg-purple-400 mr-2"></span>
+            Date: ${format(date, "PPP")}
+          </span>
+        </div>
+        <p class="mt-1 text-sm text-indigo-200">${projectDetails}</p>
+      `
+      diagramRef.current.appendChild(metadataDiv)
+
+      // Create diagram container
+      const diagramContainer = document.createElement("div")
+      diagramContainer.className = "mermaid-container"
+      diagramRef.current.appendChild(diagramContainer)
+
       // Override mermaid's internal styles - CAREFULLY EXCLUDING ARROWS
       const style = document.createElement("style")
       style.textContent = `
@@ -72,7 +110,7 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
           color: white !important;
         }
       `
-      diagramRef.current.appendChild(style)
+      diagramContainer.appendChild(style)
 
       // Initialize mermaid with proper settings
       mermaid.initialize({
@@ -145,19 +183,19 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
       </filter>
     `
 
-      diagramRef.current.innerHTML = svgDoc.documentElement.outerHTML
+      diagramContainer.innerHTML = svgDoc.documentElement.outerHTML
 
       // Apply styles to all nodes and text elements
-      if (diagramRef.current) {
+      if (diagramContainer) {
         // Make links open in new tab
-        const links = diagramRef.current.querySelectorAll("a")
+        const links = diagramContainer.querySelectorAll("a")
         links.forEach((link) => {
           link.setAttribute("target", "_blank")
           link.setAttribute("rel", "noopener noreferrer")
         })
 
         // FORCE NODE SHAPES TO BE BLACK - carefully excluding arrows
-        const nodeShapes = diagramRef.current.querySelectorAll(
+        const nodeShapes = diagramContainer.querySelectorAll(
           ".node rect, .node circle, .node ellipse, .node polygon, .node path, .basic, .label-container",
         )
         nodeShapes.forEach((shape) => {
@@ -172,14 +210,14 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
         })
 
         // Specifically target label containers
-        const labelContainers = diagramRef.current.querySelectorAll(".label-container")
+        const labelContainers = diagramContainer.querySelectorAll(".label-container")
         labelContainers.forEach((container) => {
           container.setAttribute("fill", "#121212")
           container.setAttribute("style", "fill: #121212 !important;")
         })
 
         // Target basic shapes which are often used in flowcharts
-        const basicShapes = diagramRef.current.querySelectorAll(".basic")
+        const basicShapes = diagramContainer.querySelectorAll(".basic")
         basicShapes.forEach((shape) => {
           shape.setAttribute("fill", "#121212")
           shape.setAttribute("style", "fill: #121212 !important;")
@@ -188,7 +226,7 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
         })
 
         // Make all text WHITE for visibility on dark backgrounds
-        const allTexts = diagramRef.current.querySelectorAll("text, .nodeLabel")
+        const allTexts = diagramContainer.querySelectorAll("text, .nodeLabel")
         allTexts.forEach((text) => {
           text.setAttribute("fill", "white")
           text.setAttribute(
@@ -198,7 +236,7 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
         })
 
         // Fix all foreignObject divs to have white text
-        const allForeignObjects = diagramRef.current.querySelectorAll("foreignObject div")
+        const allForeignObjects = diagramContainer.querySelectorAll("foreignObject div")
         allForeignObjects.forEach((div) => {
           div.setAttribute(
             "style",
@@ -207,7 +245,7 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
         })
 
         // FIX ARROWS - Make sure they're properly styled
-        const arrowPaths = diagramRef.current.querySelectorAll(".edgePath .path")
+        const arrowPaths = diagramContainer.querySelectorAll(".edgePath .path")
         arrowPaths.forEach((path, index) => {
           path.setAttribute("class", "path animated-path")
           path.setAttribute("stroke", "#6366f1")
@@ -218,21 +256,21 @@ export function DiagramRenderer({ code, layerColors }: DiagramRendererProps) {
         })
 
         // Fix arrow markers
-        const arrowMarkers = diagramRef.current.querySelectorAll(".marker")
+        const arrowMarkers = diagramContainer.querySelectorAll(".marker")
         arrowMarkers.forEach((marker) => {
           marker.setAttribute("fill", "#6366f1")
           marker.setAttribute("style", "fill: #6366f1 !important;")
         })
 
         // Fix arrowheads
-        const arrowheads = diagramRef.current.querySelectorAll(".arrowheadPath")
+        const arrowheads = diagramContainer.querySelectorAll(".arrowheadPath")
         arrowheads.forEach((arrowhead) => {
           arrowhead.setAttribute("fill", "#6366f1")
           arrowhead.setAttribute("style", "fill: #6366f1 !important;")
         })
 
         // Style the subgraphs (layers)
-        const clusters = diagramRef.current.querySelectorAll(".cluster")
+        const clusters = diagramContainer.querySelectorAll(".cluster")
         clusters.forEach((cluster) => {
           // Add a subtle glow to the cluster backgrounds
           const rect = cluster.querySelector("rect")

@@ -16,11 +16,11 @@ import { useExportFunctions } from "@/components/mermaid/export-functions"
 import { sampleDiagrams } from "@/components/mermaid/sample-diagrams"
 
 export default function MermaidRenderer() {
-  const [code, setCode] = useState<string>("")
-  const [projectName, setProjectName] = useState<string>("Sonya Topluluğu - TDIS Projesi")
+  const [code, setCode] = useState<string>(sampleDiagrams.simple)
+  const [projectName, setProjectName] = useState<string>("Simple Flowchart")
   const [projectVersion, setProjectVersion] = useState<string>("1.0.0")
   const [projectDetails, setProjectDetails] = useState<string>(
-    "Türkiye Deprem İzleme Sistemi - Açık Kaynak Yazılım Projesi",
+    "A simple flowchart diagram showing a basic decision flow",
   )
   const [date, setDate] = useState<Date>(new Date())
   const [theme, setTheme] = useState<string>("layered")
@@ -38,7 +38,7 @@ export default function MermaidRenderer() {
   const exportContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    fetchMermaidFromGitHub()
+    // Start with the simple diagram by default
   }, [])
 
   const fetchMermaidFromGitHub = async () => {
@@ -48,6 +48,8 @@ export default function MermaidRenderer() {
       if (response.ok) {
         const mermaidCode = await response.text()
         setCode(mermaidCode)
+        setProjectName("Sonya Topluluğu - TDIS Projesi")
+        setProjectDetails("Türkiye Deprem İzleme Sistemi - Açık Kaynak Yazılım Projesi")
       } else {
         console.error("Failed to fetch Mermaid code from GitHub")
       }
@@ -69,7 +71,28 @@ export default function MermaidRenderer() {
   }
 
   const loadSampleDiagram = (type: string) => {
-    setCode(sampleDiagrams[type as keyof typeof sampleDiagrams])
+    const diagram = sampleDiagrams[type as keyof typeof sampleDiagrams]
+    setCode(diagram)
+
+    // Update metadata based on the selected diagram type
+    switch (type) {
+      case "simple":
+        setProjectName("Simple Flowchart")
+        setProjectDetails("A simple flowchart diagram showing a basic decision flow")
+        break
+      case "layered":
+        setProjectName("Project Organization")
+        setProjectDetails("A layered diagram showing project organization structure")
+        break
+      case "flowchart":
+        setProjectName("Decision Flow")
+        setProjectDetails("A flowchart showing a decision process with multiple outcomes")
+        break
+      case "sequence":
+        setProjectName("API Sequence")
+        setProjectDetails("A sequence diagram showing API interaction flow")
+        break
+    }
   }
 
   const { exportToPDF, exportToPNG, exportToSVG, handleExport } = useExportFunctions({
@@ -109,7 +132,7 @@ export default function MermaidRenderer() {
               <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
                 Layered Mermaid Renderer
               </h1>
-              <p className="text-gray-400">Sonya Topluluğu - 2030 Edition</p>
+              <p className="text-gray-400">Sonya Topluluğu</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -309,60 +332,33 @@ export default function MermaidRenderer() {
                   </div>
 
                   <div className="relative p-6 z-10">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-                          {projectName}
-                        </h3>
-                        <div className="flex flex-wrap gap-4 text-sm text-indigo-300">
-                          <span className="flex items-center">
-                            <span className="w-2 h-2 rounded-full bg-indigo-400 mr-2"></span>
-                            Version: {projectVersion}
-                          </span>
-                          <span className="flex items-center">
-                            <span className="w-2 h-2 rounded-full bg-purple-400 mr-2"></span>
-                            Date: {format(date, "PPP")}
-                          </span>
-                        </div>
-                        <p className="mt-2 text-sm text-indigo-200">{projectDetails}</p>
-                      </div>
-                      <div className="hidden md:block">
-                        <div className="w-16 h-16 relative">
-                          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl blur-sm"></div>
-                          <div className="absolute inset-0.5 bg-black rounded-xl"></div>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Image
-                              src="/sonya-logo.png"
-                              alt="Sonya Topluluğu Logo"
-                              width={48}
-                              height={48}
-                              className="rounded-md"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
                     <div ref={diagramRef}>
-                      <DiagramRenderer code={code} layerColors={layerColors} />
+                      <DiagramRenderer
+                        code={code}
+                        layerColors={layerColors}
+                        projectName={projectName}
+                        projectVersion={projectVersion}
+                        projectDetails={projectDetails}
+                        date={date}
+                      />
                     </div>
 
                     <div className="mt-4 grid grid-cols-4 gap-2">
                       <div className="col-span-1 p-2 bg-black/50 border border-indigo-500/30 rounded-md backdrop-blur-sm">
                         <div className="text-xs text-indigo-400 font-mono">PROJECT ID</div>
-                        <div className="text-sm text-indigo-200 font-mono">TDIS-2023</div>
+                        <div className="text-sm text-indigo-200 font-mono">{projectName.substring(0, 8)}</div>
                       </div>
                       <div className="col-span-1 p-2 bg-black/50 border border-indigo-500/30 rounded-md backdrop-blur-sm">
                         <div className="text-xs text-indigo-400 font-mono">STATUS</div>
                         <div className="text-sm text-green-400 font-mono">ACTIVE</div>
                       </div>
                       <div className="col-span-1 p-2 bg-black/50 border border-indigo-500/30 rounded-md backdrop-blur-sm">
-                        <div className="text-xs text-indigo-400 font-mono">TEAM SIZE</div>
-                        <div className="text-sm text-indigo-200 font-mono">15+</div>
+                        <div className="text-xs text-indigo-400 font-mono">VERSION</div>
+                        <div className="text-sm text-indigo-200 font-mono">{projectVersion}</div>
                       </div>
                       <div className="col-span-1 p-2 bg-black/50 border border-indigo-500/30 rounded-md backdrop-blur-sm">
                         <div className="text-xs text-indigo-400 font-mono">LAST UPDATE</div>
-                        <div className="text-sm text-indigo-200 font-mono">{format(new Date(), "yyyy-MM-dd")}</div>
+                        <div className="text-sm text-indigo-200 font-mono">{format(date, "yyyy-MM-dd")}</div>
                       </div>
                     </div>
                   </div>

@@ -36,7 +36,7 @@ export function SettingsEditor({ theme, setTheme, layerColors, updateLayerColor 
               onChange={(e) => setTheme(e.target.value)}
               className="w-full p-2 rounded-md relative bg-black/70 border-indigo-500/30 text-indigo-100 focus:border-indigo-400 focus:ring-indigo-400/30"
             >
-              <option value="layered">Layered (2030)</option>
+              <option value="layered">Layered</option>
               <option value="futuristic">Futuristic</option>
               <option value="cyberpunk">Cyberpunk</option>
               <option value="neon">Neon</option>
