@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { format } from "date-fns"
 import { jsPDF } from "jspdf"
 import html2canvas from "html2canvas"
@@ -27,52 +26,106 @@ export function useExportFunctions({
   setExportLoading,
   setError,
 }: ExportFunctionsProps) {
+  // Add this helper function at the top of the useExportFunctions function
+  const forceBlackBackgrounds = (container: HTMLElement) => {
+    // Target all possible node shapes, but carefully exclude arrows
+    const nodeShapes = container.querySelectorAll(
+      ".node rect, .node circle, .node ellipse, .node polygon, .node path, .basic, .flowchart-label rect, .label-container, .flowchart-label polygon, .label, .cluster rect, rect.basic, polygon.label-container",
+    )
+
+    nodeShapes.forEach((shape) => {
+      shape.setAttribute("fill", "#121212")
+      shape.setAttribute("style", "fill: #121212 !important;")
+    })
+
+    // Override any inline styles that might be added by mermaid
+    const whiteElements = container.querySelectorAll(
+      '[style*="fill: rgb(255, 255, 255)"], [style*="fill:#fff"], [style*="fill: #fff"], [style*="fill:#ffffff"], [style*="fill: #ffffff"], [style*="fill: white"], [style*="fill:white"], [style*="fill: rgb(248, 248, 248)"], [style*="fill:#f9f9f9"], [style*="fill: #f9f9f9"]',
+    )
+
+    whiteElements.forEach((element) => {
+      element.setAttribute("fill", "#121212")
+      element.setAttribute("style", "fill: #121212 !important;")
+    })
+
+    // Make sure text is white
+    const textElements = container.querySelectorAll("text, .nodeLabel")
+    textElements.forEach((text) => {
+      text.setAttribute("fill", "white")
+      text.setAttribute(
+        "style",
+        "fill: white !important; color: white !important; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8);",
+      )
+    })
+
+    // Fix arrows
+    const arrowPaths = container.querySelectorAll(".edgePath .path")
+    arrowPaths.forEach((path) => {
+      path.setAttribute("fill", "none")
+      path.setAttribute("style", "fill: none !important;")
+      path.setAttribute("stroke", "#6366f1")
+      path.setAttribute("stroke-width", "2")
+    })
+
+    // Fix arrowheads
+    const arrowheads = container.querySelectorAll(".arrowheadPath, .marker")
+    arrowheads.forEach((arrowhead) => {
+      arrowhead.setAttribute("fill", "#6366f1")
+      arrowhead.setAttribute("style", "fill: #6366f1 !important;")
+    })
+  }
+
+  // Update the exportToPDF function to use the forceBlackBackgrounds helper
   const exportToPDF = async () => {
     if (!exportContainerRef.current) return
 
     setExportLoading(true)
 
     try {
+      // Get the exact container as rendered on the site - including logo and all elements
       const element = exportContainerRef.current
 
-      // Create a high-quality canvas with better settings
+      // Force black backgrounds before export
+      forceBlackBackgrounds(element)
+
+      // Wait a moment to ensure styles are applied
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      // Force black backgrounds again to catch any late-rendered elements
+      forceBlackBackgrounds(element)
+
+      // Create an ultra-high quality canvas with the exact same approach as diagram-renderer
       const canvas = await html2canvas(element, {
-        scale: 4, // Increase scale for higher resolution
+        scale: 5, // Ultra-high resolution for maximum quality
         useCORS: true,
-        logging: false,
+        logging: true,
         backgroundColor: "#0f0f1a",
         allowTaint: true,
         imageTimeout: 0,
         removeContainer: false,
-        // Improve text rendering
         letterRendering: true,
-        // Ensure we capture the full height and width
-        height: element.scrollHeight + 100, // Add extra padding
-        windowHeight: element.scrollHeight + 100,
-        width: element.scrollWidth + 100,
-        windowWidth: element.scrollWidth + 100,
       })
 
-      const imgData = canvas.toDataURL("image/png", 1.0) // Use maximum quality
+      // Get the image data at maximum quality
+      const imgData = canvas.toDataURL("image/png", 1.0)
 
-      // Determine orientation based on canvas dimensions
+      // Determine orientation based on dimensions
       const orientation = canvas.width > canvas.height ? "landscape" : "portrait"
 
+      // Create a PDF with the exact dimensions
       const pdf = new jsPDF({
         orientation: orientation,
         unit: "mm",
-        compress: false, // Disable compression for better quality
-        hotfixes: ["px_scaling"], // Fix scaling issues
         format: [canvas.width * 0.264583, canvas.height * 0.264583], // Convert pixels to mm
+        compress: false, // No compression for maximum quality
       })
 
-      // Calculate dimensions to fit the entire image
+      // Add the image at exact dimensions
       const pdfWidth = pdf.internal.pageSize.getWidth()
       const pdfHeight = pdf.internal.pageSize.getHeight()
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight)
 
-      // Add the image to fill the entire PDF
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, "FAST")
-
+      // Save the PDF
       pdf.save(`${projectName.replace(/\s+/g, "_")}_${format(date, "yyyy-MM-dd")}.pdf`)
     } catch (error) {
       console.error("PDF export failed:", error)
@@ -82,32 +135,38 @@ export function useExportFunctions({
     }
   }
 
+  // Update the exportToPNG function to use the forceBlackBackgrounds helper
   const exportToPNG = async () => {
     if (!exportContainerRef.current) return
 
     setExportLoading(true)
 
     try {
+      // Get the exact container as rendered on the site - including logo and all elements
       const element = exportContainerRef.current
 
-      // Create a high-quality canvas with better settings
+      // Force black backgrounds before export
+      forceBlackBackgrounds(element)
+
+      // Wait a moment to ensure styles are applied
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      // Force black backgrounds again to catch any late-rendered elements
+      forceBlackBackgrounds(element)
+
+      // Create an ultra-high quality canvas with the exact same approach as diagram-renderer
       const canvas = await html2canvas(element, {
-        scale: 4, // Higher scale for better resolution
+        scale: 5, // Ultra-high resolution for maximum quality
         useCORS: true,
-        logging: false,
+        logging: true,
         backgroundColor: "#0f0f1a",
         allowTaint: true,
         imageTimeout: 0,
         removeContainer: false,
         letterRendering: true,
-        // Ensure we capture the full height and width
-        height: element.scrollHeight + 100,
-        windowHeight: element.scrollHeight + 100,
-        width: element.scrollWidth + 100,
-        windowWidth: element.scrollWidth + 100,
       })
 
-      // Convert to high-quality PNG
+      // Get the image data at maximum quality
       const imgData = canvas.toDataURL("image/png", 1.0)
 
       // Create download link
@@ -123,18 +182,42 @@ export function useExportFunctions({
     }
   }
 
+  // Update the exportToSVG function to use the forceBlackBackgrounds helper
   const exportToSVG = async () => {
     if (!diagramRef.current) return
 
     setExportLoading(true)
 
     try {
+      // Force black backgrounds on the diagram container
+      if (diagramRef.current) {
+        const container = diagramRef.current.querySelector(".mermaid-container")
+        if (container) {
+          forceBlackBackgrounds(container as HTMLElement)
+
+          // Wait a moment to ensure styles are applied
+          await new Promise((resolve) => setTimeout(resolve, 100))
+
+          // Force black backgrounds again to catch any late-rendered elements
+          forceBlackBackgrounds(container as HTMLElement)
+        }
+      }
+
       // Get the SVG content
-      const svgElement = diagramRef.current.querySelector("svg")
+      const svgElement = diagramRef.current.querySelector(".mermaid-container svg")
       if (!svgElement) throw new Error("SVG element not found")
 
       // Clone the SVG to avoid modifying the displayed one
       const svgClone = svgElement.cloneNode(true) as SVGElement
+
+      // Force black backgrounds on the cloned SVG
+      const nodeShapes = svgClone.querySelectorAll(
+        ".node rect, .node circle, .node ellipse, .node polygon, .node path, .basic, .flowchart-label rect, .label-container",
+      )
+      nodeShapes.forEach((shape) => {
+        shape.setAttribute("fill", "#121212")
+        shape.setAttribute("style", "fill: #121212 !important;")
+      })
 
       // Add project metadata to the SVG
       const metadataGroup = document.createElementNS("http://www.w3.org/2000/svg", "g")

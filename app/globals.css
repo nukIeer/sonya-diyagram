@@ -83,7 +83,12 @@
 .mermaid-diagram .node path,
 .mermaid-diagram .basic,
 .mermaid-diagram .flowchart-label rect,
-.mermaid-diagram .label-container {
+.mermaid-diagram .label-container,
+.mermaid-diagram .flowchart-label polygon,
+.mermaid-diagram .label,
+.mermaid-diagram .cluster rect,
+.mermaid-diagram rect.basic,
+.mermaid-diagram polygon.label-container {
   fill: #121212 !important;
   stroke: url(#border-gradient) !important;
   stroke-width: 3px !important;
@@ -240,7 +245,11 @@
 .mermaid-diagram svg .node polygon,
 .mermaid-diagram svg .node path,
 .mermaid-diagram svg .basic,
-.mermaid-diagram svg rect:not(.label-container) {
+.mermaid-diagram svg rect:not(.label-container),
+.mermaid-diagram svg .flowchart-label rect,
+.mermaid-diagram svg .flowchart-label polygon,
+.mermaid-diagram svg .label,
+.mermaid-diagram svg polygon.label-container {
   fill: #121212 !important;
   stroke-width: 3px !important;
 }
